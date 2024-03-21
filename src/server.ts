@@ -77,8 +77,13 @@ type bodytransactions={
 
 }
 
-server.get('/transactions',(req,res)=>{
-    res.status(201).json(users)
+server.get('/client/:id/transactions',(req,res)=>{
+    const {id}=req.params;
+    const cliente=users.find(client=>client.id===id);
+    if(cliente){
+        res.status(201).json(cliente.transactions)
+    }
+    
 })
 
 server.post('/transactions',(req,res)=>{
@@ -104,14 +109,13 @@ server.post('/transactions',(req,res)=>{
     }
 })
 
-server.put('/transactions/:idUser', (req, res) => {
-    const { id } = req.headers;
-    const {idUser}=req.params
+server.put('/client/:idUser/transactions/:id', (req, res) => {
+    const {idUser,id}=req.params
     const { value} = req.body;
 
     const indexUser = users.findIndex(user => user.id === idUser);
     if(indexUser===-1){
-        res.send(`${idUser} ${id}`)
+        res.status(404).send("usuario não encontrado")
     }
 
     const transactionIndex = users[indexUser].transactions.findIndex(trans => trans.id === id);
@@ -126,9 +130,8 @@ server.put('/transactions/:idUser', (req, res) => {
 
 
 
-server.delete('/transactions/:idUser',(req,res)=>{
-    const {id}=req.headers
-    const {idUser}=req.params;
+server.delete('/client/:idUser/transactions/:id',(req,res)=>{
+    const {idUser,id}=req.params;
 
     const indexUser=users.findIndex(users=>users.id===idUser);
     const transactionIndex = users[indexUser].transactions.findIndex(trans => trans.id === id);
